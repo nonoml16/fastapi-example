@@ -29,7 +29,6 @@ async def create_item(item: Item) -> Item:
 
 @app.put("/items/{pos}")
 async def edit_item(pos: int, item: Item) -> Item:
-    lista.remove(pos)
     lista.insert(pos, item)
     return lista.pop(pos)
 
