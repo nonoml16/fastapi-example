@@ -1,14 +1,17 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from fastapi import FastAPI, HTTPException, Depends
+
+from db import *
+from models import *
+from models.item import Item
 
 app = FastAPI()
 
 lista = []
 
 
-class Item(BaseModel):
-    name: str
-    description: str = None
+@app.on_event('startup')
+def create_db():
+    Base.metadata.create_all(bind=engine)
 
 
 @app.get("/items", response_model=list[Item])
@@ -24,7 +27,7 @@ async def get_posicion(pos: int):
 
 
 @app.post("/items/", response_model=Item)
-async def create_item(item: Item):
+async def create_item(item: Item, session: Session = Depends(get_session())):
     lista.append(item)
     return item
 
